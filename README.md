@@ -43,11 +43,24 @@ and can stay empty until those phases land.
 
 ## Deploy to Vercel
 
-1. Import the repo in Vercel (New Project → import `outboundengine`). Next.js is
-   auto-detected.
-2. Add the environment variables from `.env.example` under
-   **Settings → Environment Variables** (at minimum `DATABASE_URL`).
-3. Deploy, then hit `/api/health` — you want `"database": "ok"`.
+1. **Import the repo** — Vercel → Add New → Project → import `outboundengine`.
+   Next.js is auto-detected; no build settings to change.
+2. **Attach a database (one click, no copy-paste)** — in the project, open the
+   **Storage** tab → **Create Database** → choose **Supabase** (or Neon /
+   Vercel Postgres) → connect it to this project. Vercel injects the connection
+   env vars (`POSTGRES_URL`, `POSTGRES_PRISMA_URL`, `POSTGRES_URL_NON_POOLING`,
+   …) automatically. The app resolves any of these — **you do not need to set
+   `DATABASE_URL` by hand.**
+   - Prefer to use an existing Supabase project instead? Add `DATABASE_URL`
+     manually under Settings → Environment Variables with the pooled
+     (transaction mode, port 6543) connection string.
+3. **Deploy**, then hit `/api/health` — you want `{ "database": "ok" }`. The
+   `/` page shows the same as a status dot.
+
+> The Phase 1 health check only runs `select 1`, so it goes green as soon as a
+> connection string is present — migrations are not required for the deploy to
+> be healthy. Run `npm run db:migrate` (locally, against the same DB) when a
+> later phase needs the tables.
 
 ## Security
 

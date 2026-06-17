@@ -9,17 +9,40 @@ import postgres from "postgres";
  * recorded in schema_migrations, each in its own transaction.
  *
  * Usage: npm run db:migrate
+ *
+ * Prefers a NON-pooling connection for DDL (transaction pooling can choke
+ * on some DDL). Resolves from the same env names Vercel's database
+ * integrations inject, so this works both locally and against a Vercel DB.
  */
-const DATABASE_URL = process.env.DATABASE_URL;
-if (!DATABASE_URL) {
-  console.error("DATABASE_URL is not set. Add it to .env.local or your shell.");
+const CONNECTION_ENV_KEYS = [
+  "POSTGRES_URL_NON_POOLING", // direct — best for DDL
+  "DATABASE_URL",
+  "POSTGRES_URL",
+  "POSTGRES_PRISMA_URL",
+];
+
+function resolveConnectionString(): string | undefined {
+  for (const key of CONNECTION_ENV_KEYS) {
+    const v = process.env[key];
+    if (v && v.trim().length > 0) return v;
+  }
+  return undefined;
+}
+
+const connectionString = resolveConnectionString();
+if (!connectionString) {
+  console.error(
+    `No Postgres connection string found. Set one of: ${CONNECTION_ENV_KEYS.join(
+      ", ",
+    )}.`,
+  );
   process.exit(1);
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const migrationsDir = join(__dirname, "..", "migrations");
 
-const sql = postgres(DATABASE_URL, { max: 1, prepare: false });
+const sql = postgres(connectionString, { max: 1, prepare: false });
 
 async function ensureRegistry() {
   await sql`
