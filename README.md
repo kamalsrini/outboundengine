@@ -75,7 +75,7 @@ and can stay empty until those phases land.
 | ----- | ----- |
 | 1 ✅ | Deploy skeleton: app, DB layer, self-migrating schema, health check, env scaffold |
 | 2 ✅ | Product/context ingestion (`/context` UI + APIs, chunking, full-text retrieval) |
-| 3 | Prospect ingestion (CSV → validated, deduped `prospects`) |
+| 3 ✅ | Prospect ingestion (`/prospects` UI + APIs, CSV parse, header mapping, validation, dedupe) |
 | 4 | Personalization & multi-step sequence generation (+ review queue) |
 | 5 | Sending integration (Instantly/Lemlist, webhooks, reply classification) |
 | 6 | A/B testing & optimization loop |

@@ -34,9 +34,12 @@ export default async function Home() {
         </ul>
       </section>
 
-      <p style={{ marginTop: 24, fontSize: 14 }}>
+      <p style={{ marginTop: 24, fontSize: 14, display: "flex", gap: 18 }}>
         <a href="/context" style={{ color: "#58a6ff" }}>
           Product context →
+        </a>
+        <a href="/prospects" style={{ color: "#58a6ff" }}>
+          Prospects →
         </a>
       </p>
 

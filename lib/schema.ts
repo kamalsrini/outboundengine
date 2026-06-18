@@ -27,8 +27,16 @@ create table if not exists prospects (
   title       text,
   company     text,
   industry    text,
+  source      text not null default 'csv',
+  status      text not null default 'new',
+  raw         jsonb not null default '{}'::jsonb,
   created_at  timestamptz not null default now()
 );
+-- Idempotent additions for databases created before these columns existed.
+alter table prospects add column if not exists source text not null default 'csv';
+alter table prospects add column if not exists status text not null default 'new';
+alter table prospects add column if not exists raw jsonb not null default '{}'::jsonb;
+create index if not exists prospects_status_idx on prospects (status);
 
 create table if not exists context_documents (
   id           uuid primary key default gen_random_uuid(),
