@@ -34,7 +34,13 @@ export default async function Home() {
         </ul>
       </section>
 
-      <p style={{ marginTop: 24, fontSize: 13, color: "#6b7280" }}>
+      <p style={{ marginTop: 24, fontSize: 14 }}>
+        <a href="/context" style={{ color: "#58a6ff" }}>
+          Product context →
+        </a>
+      </p>
+
+      <p style={{ marginTop: 8, fontSize: 13, color: "#6b7280" }}>
         Health JSON at <code>/api/health</code>.
       </p>
     </main>

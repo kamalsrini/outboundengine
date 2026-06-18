@@ -20,9 +20,9 @@ build on. No personalization, sending, or optimization yet.
 
 ```bash
 npm install
-cp .env.example .env.local      # then fill in DATABASE_URL + Supabase keys
-npm run db:migrate              # applies migrations/*.sql
+cp .env.example .env.local      # then fill in DATABASE_URL (Supabase pooled URI)
 npm run dev                     # http://localhost:3000
+# schema self-applies on first DB use; `npm run db:migrate` applies it explicitly
 ```
 
 Visit `/` for a status page or `/api/health` for JSON. A healthy response:
@@ -57,10 +57,10 @@ and can stay empty until those phases land.
 3. **Deploy**, then hit `/api/health` — you want `{ "database": "ok" }`. The
    `/` page shows the same as a status dot.
 
-> The Phase 1 health check only runs `select 1`, so it goes green as soon as a
-> connection string is present — migrations are not required for the deploy to
-> be healthy. Run `npm run db:migrate` (locally, against the same DB) when a
-> later phase needs the tables.
+> The health check only runs `select 1`, so it goes green as soon as a
+> connection string is present. Application tables are created automatically on
+> first use (`ensureSchema()` in `lib/schema.ts`), so no manual migration step
+> is needed on Vercel.
 
 ## Security
 
@@ -73,8 +73,8 @@ and can stay empty until those phases land.
 
 | Phase | Scope |
 | ----- | ----- |
-| 1 ✅ | Deploy skeleton: app, DB layer, migrations, health check, env scaffold |
-| 2 | Product/context ingestion (uploads → retrievable store) |
+| 1 ✅ | Deploy skeleton: app, DB layer, self-migrating schema, health check, env scaffold |
+| 2 ✅ | Product/context ingestion (`/context` UI + APIs, chunking, full-text retrieval) |
 | 3 | Prospect ingestion (CSV → validated, deduped `prospects`) |
 | 4 | Personalization & multi-step sequence generation (+ review queue) |
 | 5 | Sending integration (Instantly/Lemlist, webhooks, reply classification) |
