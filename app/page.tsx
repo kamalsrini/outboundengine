@@ -41,6 +41,9 @@ export default async function Home() {
         <a href="/prospects" style={{ color: "#58a6ff" }}>
           Prospects →
         </a>
+        <a href="/sequences" style={{ color: "#58a6ff" }}>
+          Sequences →
+        </a>
       </p>
 
       <p style={{ marginTop: 8, fontSize: 13, color: "#6b7280" }}>

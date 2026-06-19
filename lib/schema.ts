@@ -64,6 +64,32 @@ create index if not exists context_chunks_document_idx
   on context_chunks (document_id);
 create index if not exists context_chunks_tsv_idx
   on context_chunks using gin (tsv);
+
+create table if not exists sequences (
+  id          uuid primary key default gen_random_uuid(),
+  prospect_id uuid not null references prospects(id) on delete cascade,
+  product_id  uuid references products(id) on delete set null,
+  status      text not null default 'draft', -- draft | approved | rejected
+  model       text,
+  created_at  timestamptz not null default now(),
+  approved_at timestamptz
+);
+create index if not exists sequences_prospect_idx on sequences (prospect_id);
+create index if not exists sequences_status_idx on sequences (status);
+
+create table if not exists sequence_steps (
+  id          uuid primary key default gen_random_uuid(),
+  sequence_id uuid not null references sequences(id) on delete cascade,
+  step_number integer not null,
+  day_offset  integer not null default 0,
+  subject     text not null,
+  body        text not null,
+  purpose     text,
+  cta         text,
+  created_at  timestamptz not null default now()
+);
+create index if not exists sequence_steps_sequence_idx
+  on sequence_steps (sequence_id);
 `;
 
 // Arbitrary fixed key for the advisory lock guarding schema application.
